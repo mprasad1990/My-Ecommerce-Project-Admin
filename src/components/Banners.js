@@ -34,14 +34,38 @@ export default function Banners() {
   }, []);
 
 
+  const [formData, setFormData] = useState({
+    itemTitle: {required: true, value:"", errorClass:"", errorMessage:""},
+    itemDescription: {required: true, value:"", errorClass:"", errorMessage:""},
+    itemImage: {required: false, value:"", errorClass:"", errorMessage:""}
+  });
   const [sectionShow, setSectionShow] = useState("table");
   const [formMode, setFormMode]       = useState("insert");
   const [itemId, setItemId]           = useState("");
 
+  const resetForm = () => {
+    Object.keys(formData).forEach((element) => {
+      formData[element].value = "";
+      formData[element].errorMessage = "";
+      formData[element].errorClass = "";
+    })
+    setFormData({...formData, ...formData});
+    setFormMode("insert");
+    setItemId("");
+    setImage('/assets/images/no-image.jpg');
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+    setCroppedAreaPixels(null);
+    setCroppedImage(null);
+  }
+
   const sectionShowHide = (section) => {
+    resetForm();
     setSectionShow(section);
   }
 
+  
   const tableHeader = [
     {colName: 'Title', colWidth: '20%'}, 
     {colName: 'Description', colWidth: '50%'}, 
@@ -65,11 +89,6 @@ export default function Banners() {
   ])
 
 
-  const [formData, setFormData] = useState({
-    itemTitle: {required: true, value:"", errorClass:"", errorMessage:""},
-    itemDescription: {required: true, value:"", errorClass:"", errorMessage:""},
-    itemImage: {required: false, value:"", errorClass:"", errorMessage:""}
-  });
   const handleChange = (e) => {
     const { name, value } = e.target;
     if(value.trim() !== ""){
@@ -103,8 +122,7 @@ export default function Banners() {
       return false;
     }
     else{
-      //alertContext.setAlertMessage({show:true, type: "success", message: "Form saved successfully"});
-      //loaderContext.setLoaderState("show");
+
       if(image.indexOf("no-image.jpg") >= 0){
         alertContext.setAlertMessage({show:true, type: "error", message: "Please upload an image!"});
       }
@@ -118,19 +136,44 @@ export default function Banners() {
         jsonData['formMode'] = formMode;
         jsonData['itemId'] = itemId;
         
+        let imageConfig = {
+          'crop_area': croppedAreaPixels,
+          'rotation': rotation,
+          'zoom': zoom
+        }
+
+        jsonData['itemImageConfig'] = JSON.stringify(imageConfig);
+
+        loaderContext.setLoaderState("show");
+        
         const response = await fetch(`${API_SOURCE_URL}/admin/save-banner`, {
           method: 'POST',
           headers:{
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem('token')
           },
           body: JSON.stringify(jsonData)
         })
 
+        let result = await response.json();
+
+        setFormMode("update");
+        setItemId(result.result._id);
+        setCroppedImage(result.result.image);
+        
+        loaderContext.setLoaderState("hide");
+
+        if(result.success){
+          alertContext.setAlertMessage({show:true, type: "success", message: result.message});
+        }
+        else{
+          alertContext.setAlertMessage({show:true, type: "error", message: result.message});
+        }
+
+        resetForm();
+
       }
-      //console.log(currentCroppedImage);
-      //console.log(croppedAreaPixels);
-      //console.log(rotation);
-      //console.log(zoom);
+      
     }
   }
 
@@ -164,15 +207,15 @@ export default function Banners() {
                       <div className="col-sm-12 col-lg-6">
                         <div className={`form-group mb-3 ${formData['itemTitle'].errorClass}`}>
                           <label htmlFor="itemTitle">Title</label>
-                          <input type="text" className="form-control" id="itemTitle" name="itemTitle" onChange={handleChange}/>
+                          <input type="text" className="form-control" id="itemTitle" name="itemTitle" onChange={handleChange} value={formData['itemTitle'].value}/>
                           <small className="error-mesg">{formData['itemTitle'].errorMessage}</small>
                         </div>
                       </div>
                       <div className="col-sm-12 col-lg-6">
                         <div className={`form-group mb-3 ${formData['itemDescription'].errorClass}`}>
                           <label htmlFor="itemDescription">Description</label>
-                          <input type="text" className="form-control" id="itemDescription" name="itemDescription" onChange={handleChange}/>
-                          <small className="error-mesg">{formData['itemDescription'].errorMessage}</small>
+                          <input type="text" className="form-control" id="itemDescription" name="itemDescription" onChange={handleChange} value={formData['itemDescription'].value}/>
+                          <small className="error-mesg">{formData['itemDescription'].errorMessage}</small> 
                         </div>
                       </div>
 
