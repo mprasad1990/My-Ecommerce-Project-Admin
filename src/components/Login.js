@@ -2,6 +2,7 @@ import React, {useContext, useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LoginContext from '../context/login/LoginContext';
 import { API_SOURCE_URL } from '../utils/constants';
+import Alert from './util/Alert';
 
 export default function Login() {
 
@@ -23,10 +24,12 @@ export default function Login() {
     userpassword: ""
   })
 
-  const [displayMessage, setDisplayMessage] = useState("");
-  const [displayType, setDisplayType] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState({
+    type: "success",
+    message: ""
+  });
 
-  const populateErrorMessage = () => {
+  const validateFrom = () => {
     
     const fieldName = Object.keys(formData);
     
@@ -49,8 +52,6 @@ export default function Login() {
     setErrorMessage({ ...errorJson });
     setErrorClass({ ...classJson });
 
-    console.log(classJson);
-
     return errorCounter;
 
   }
@@ -58,12 +59,11 @@ export default function Login() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({...formData, [name]: value});
-    populateErrorMessage();
   }
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    let errorCounter = populateErrorMessage();
+    let errorCounter = validateFrom();
     if(errorCounter > 0){
       return false;
     }
@@ -81,20 +81,17 @@ export default function Login() {
       if(json.success){
         localStorage.setItem('token', json.authToken);
         loginContext.updateLoginState(true);
-        setDisplayMessage("Login Successful!");
-        setDisplayType("success");
+        setNotificationMessage({type: "success", message: "Login Successful!"});
         setTimeout(function(){
           navigate('/dashboard');
         }, 1000);
       }
       else{
         if(json.error){
-          setDisplayType("danger");
-          setDisplayMessage(json.error);
+          setNotificationMessage({type: "error", message: json.error});
         }
         else{
-          setDisplayType("danger");
-          setDisplayMessage("Something went wrong! Please try again.");
+          setNotificationMessage({type: "error", message: "Something went wrong! Please try again."});
         }
       }
     }
@@ -153,12 +150,6 @@ export default function Login() {
                         </div>
                       </div>
 
-                      {displayMessage !== "" && <div className="mb-3">
-                        <div className={`alert alert-${displayType}`}>
-                          {displayMessage}
-                        </div>
-                      </div>}
-
                     </form>
                     <div className="mt-5 pt-4 text-center">
                         <p>© 2023 Lakhi's Cosmetics</p>
@@ -168,6 +159,7 @@ export default function Login() {
               </div>
             </div>
           </div>
+          {notificationMessage.message && <Alert type={notificationMessage.type} message={notificationMessage.message}/>}
         </div>
       </>
         

@@ -13,11 +13,17 @@ import Logout from './Logout';
 import Footer from './Footer';
 import Login from './Login';
 import LoginContext from '../context/login/LoginContext';
+import LoaderContext from '../context/loader/LoaderContext';
+import AlertContext from '../context/alert/AlertContext';
 import TestCropper from './TestCropper';
+import Loader from './util/Loader';
+import Alert from './util/Alert';
 
 export default function Core() {
 
   const loginContext = useContext(LoginContext);
+  const loaderContext= useContext(LoaderContext);
+  const alertContext = useContext(AlertContext);
 
   const isLoggedIn = loginContext.loginState.is_logged_in;
 
@@ -27,6 +33,8 @@ export default function Core() {
         (isLoggedIn === true) && <div id="layout-wrapper">
           <TopBar/>
             <VerticalMenu/>
+            <Loader status={loaderContext.loaderState}/>
+            {alertContext.alertMessage.show && <Alert type={alertContext.alertMessage.type} message={alertContext.alertMessage.message}/>}
             <div className="main-content">
               <Routes>
                 <Route exact path="/dashboard" element={<Dashboard/>}></Route>
