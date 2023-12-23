@@ -2,7 +2,8 @@ import React, {useContext, useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LoginContext from '../context/login/LoginContext';
 import { API_SOURCE_URL } from '../utils/constants';
-import Alert from './util/Alert';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Login() {
 
@@ -23,11 +24,6 @@ export default function Login() {
     username: "",
     userpassword: ""
   })
-
-  const [notificationMessage, setNotificationMessage] = useState({
-    type: "success",
-    message: ""
-  });
 
   const validateFrom = () => {
     
@@ -79,19 +75,19 @@ export default function Login() {
       const json = await response.json();
   
       if(json.success){
-        localStorage.setItem('token', json.authToken);
-        loginContext.updateLoginState(true);
-        setNotificationMessage({type: "success", message: "Login Successful!"});
-        setTimeout(function(){
+        toast.success("Login Successful!", { autoClose: 2000, position: toast.POSITION.TOP_CENTER, toastId: "success" });
+        setTimeout(() => {
+          localStorage.setItem('token', json.authToken);
+          loginContext.updateLoginState(true);
           navigate('/dashboard');
-        }, 1000);
+        }, 3000);
       }
       else{
         if(json.error){
-          setNotificationMessage({type: "error", message: json.error});
+          toast.error(json.error, { autoClose: 2000, position: toast.POSITION.TOP_CENTER, toastId: "error" });
         }
         else{
-          setNotificationMessage({type: "error", message: "Something went wrong! Please try again."});
+          toast.error("Something went wrong! Please try again.", { autoClose: 2000, position: toast.POSITION.TOP_CENTER, toastId: "error" });
         }
       }
     }
@@ -102,7 +98,7 @@ export default function Login() {
 
       <>
         <div className="accountbg" style={{ backgroundImage: `url("/assets/images/bg.jpg")`,  backgroundSize: `cover`, backgroundPosition: `center`}}></div>
-
+        <ToastContainer />
         <div className="wrapper-page account-page-full">
           <div className="card shadow-none">
             <div className="card-block">
@@ -159,7 +155,6 @@ export default function Login() {
               </div>
             </div>
           </div>
-          {notificationMessage.message && <Alert type={notificationMessage.type} message={notificationMessage.message}/>}
         </div>
       </>
         
