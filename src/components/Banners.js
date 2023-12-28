@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useRef, useContext, useEffect } from 'react'
-import Table from './util/Table'
 
 import Slider from "@mui/material/Slider";
 import Cropper from "react-easy-crop";
@@ -10,7 +9,13 @@ import AlertContext from '../context/alert/AlertContext';
 import { API_SOURCE_URL, RESOURCE_URL } from '../utils/constants';
 
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import "primereact/resources/themes/saga-blue/theme.css";
+import 'primereact/resources/primereact.min.css';
+import moment from 'moment';
+import { Link } from 'react-router-dom';
+import { Tooltip } from '@mui/material';
 
 export default function Banners() {
 
@@ -77,12 +82,7 @@ export default function Banners() {
     setSectionShow(section);
   }
 
-  const tableHeader = [
-    {colName: 'Title', colWidth: '20%'}, 
-    {colName: 'Description', colWidth: '47%'}, 
-    {colName: 'Last Update', colWidth: '25%'}, 
-    {colName: 'Action', colWidth: '8%'}
-  ];
+
   const [tableData, setTableData] = useState([])
   const createBannerTable = async () => {
     const response = await fetch(`${API_SOURCE_URL}/admin/fetch-banner`, {
@@ -265,7 +265,14 @@ export default function Banners() {
         accept: () => acceptDeleteBanner(id),
     });
   }
-  const functionsList = {'editBanner':editBanner, 'deleteBanner':deleteBanner};
+  const bannerActionTemplate = (rowData) => {
+    return (
+      <>
+        <Tooltip title="Edit" placement="top"><Link className="waves-effect" onClick={()=>{ editBanner(rowData._id) }}><i className="fas fa-pencil-alt"></i></Link></Tooltip>
+        <Tooltip title="Delete" placement="top"><Link className="waves-effect ml-7" onClick={()=>{ deleteBanner(rowData._id) }}><i className="far fa-trash-alt"></i></Link></Tooltip>
+      </>
+    );
+  }
 
   return (
     <div className="page-content">
@@ -283,11 +290,16 @@ export default function Banners() {
               <div className="card-body">
                 <ConfirmDialog />
                 {(sectionShow === 'table') && <div className="table-section">
-                    <div className="mb-3 text-right">
-                      <button type="button" className="btn btn-primary" onClick={() => { sectionShowHide('form') }}>Add Banner</button>
-                    </div>
-                    <Table tableHeader={tableHeader} tableData={tableData} section="banner" functions={functionsList}/>
+                  <div className="mb-3 text-right">
+                    <button type="button" className="btn btn-primary" onClick={() => { sectionShowHide('form') }}>Add Banner</button>
                   </div>
+                  <DataTable filter paginator rows={10} className="table-bordered" size="small" value={tableData} tableStyle={{ width: '100%' }} >
+                    <Column field="title" header="Title" style={{ width: '20%' }}></Column>
+                    <Column field="description" header="Description" style={{ width: '47%' }}></Column>
+                    <Column body={(rowData)=>{return moment(rowData.date).format('MMM D, YYYY, hh:mm:ss A')}} header="Last Update" style={{ width: '25%' }}></Column>
+                    <Column className="text-center" body={bannerActionTemplate} header="Action" style={{ width: '8%' }}></Column>
+                  </DataTable>
+                </div>
                 }
                 
                 {(sectionShow === 'form') && <form name="bannerForm" onSubmit={handleFormSubmit}>
