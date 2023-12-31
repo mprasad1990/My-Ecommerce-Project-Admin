@@ -11,7 +11,7 @@ code {
 
 .cropped-image {
     /* height: 600px; */
-    width: auto;
+    max-width: 229px;
 }
 
 .cropped-image-container {

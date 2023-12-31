@@ -278,9 +278,9 @@ export default function Banners() {
     <div className="page-content">
       <div className="container-fluid">
         <div className="page-title-box">
-          <div className="row align-items-center"> 
+          <div className="row align-items-center">
             <div className="col-md-8">
-                <h6 className="page-title">Banners</h6>
+              <h6 className="page-title">Banners</h6>
             </div>
           </div>
         </div>
@@ -289,56 +289,128 @@ export default function Banners() {
             <div className="card">
               <div className="card-body">
                 <ConfirmDialog />
-                {(sectionShow === 'table') && <div className="table-section">
-                  <div className="mb-3 text-right">
-                    <button type="button" className="btn btn-primary" onClick={() => { sectionShowHide('form') }}>Add Banner</button>
+                {sectionShow === "table" && (
+                  <div className="table-section">
+                    <div className="mb-3 text-right">
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => {
+                          sectionShowHide("form");
+                        }}
+                      >
+                        Add Banner
+                      </button>
+                    </div>
+                    <DataTable
+                      paginator
+                      rows={10}
+                      className="table-bordered"
+                      size="small"
+                      value={tableData}
+                      tableStyle={{ width: "100%" }}
+                    >
+                      <Column
+                        field="title"
+                        header="Title"
+                        style={{ width: "20%" }}
+                      ></Column>
+                      <Column
+                        field="description"
+                        header="Description"
+                        style={{ width: "57%" }}
+                      ></Column>
+                      <Column
+                        body={(rowData) => {
+                          return moment(rowData.date).format(
+                            "MMM D, YYYY"
+                          );
+                        }}
+                        header="Last Update"
+                        style={{ width: "15%" }}
+                      ></Column>
+                      <Column
+                        className="text-center"
+                        body={bannerActionTemplate}
+                        header="Action"
+                        style={{ width: "8%" }}
+                      ></Column>
+                    </DataTable>
                   </div>
-                  <DataTable filter paginator rows={10} className="table-bordered" size="small" value={tableData} tableStyle={{ width: '100%' }} >
-                    <Column field="title" header="Title" style={{ width: '20%' }}></Column>
-                    <Column field="description" header="Description" style={{ width: '47%' }}></Column>
-                    <Column body={(rowData)=>{return moment(rowData.date).format('MMM D, YYYY, hh:mm:ss A')}} header="Last Update" style={{ width: '25%' }}></Column>
-                    <Column className="text-center" body={bannerActionTemplate} header="Action" style={{ width: '8%' }}></Column>
-                  </DataTable>
-                </div>
-                }
-                
-                {(sectionShow === 'form') && <form name="bannerForm" onSubmit={handleFormSubmit}>
+                )}
+
+                {sectionShow === "form" && (
+                  <form name="bannerForm" onSubmit={handleFormSubmit}>
                     <div className="row">
                       <div className="text-right">
-                        <button type="button" className="btn btn-primary" onClick={() => { sectionShowHide('table') }}>Back</button>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          onClick={() => {
+                            sectionShowHide("table");
+                          }}
+                        >
+                          Back
+                        </button>
                       </div>
                       <div className="col-sm-12 col-lg-6">
-                        <div className={`form-group mb-3 ${formData['itemTitle'].errorClass}`}>
+                        <div
+                          className={`form-group mb-3 ${formData["itemTitle"].errorClass}`}
+                        >
                           <label htmlFor="itemTitle">Title</label>
-                          <input type="text" className="form-control" id="itemTitle" name="itemTitle" onChange={handleChange} value={formData['itemTitle'].value}/>
-                          <small className="error-mesg">{formData['itemTitle'].errorMessage}</small>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="itemTitle"
+                            name="itemTitle"
+                            onChange={handleChange}
+                            value={formData["itemTitle"].value}
+                          />
+                          <small className="error-mesg">
+                            {formData["itemTitle"].errorMessage}
+                          </small>
                         </div>
                       </div>
                       <div className="col-sm-12 col-lg-6">
-                        <div className={`form-group mb-3 ${formData['itemDescription'].errorClass}`}>
+                        <div
+                          className={`form-group mb-3 ${formData["itemDescription"].errorClass}`}
+                        >
                           <label htmlFor="itemDescription">Description</label>
-                          <input type="text" className="form-control" id="itemDescription" name="itemDescription" onChange={handleChange} value={formData['itemDescription'].value}/>
-                          <small className="error-mesg">{formData['itemDescription'].errorMessage}</small> 
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="itemDescription"
+                            name="itemDescription"
+                            onChange={handleChange}
+                            value={formData["itemDescription"].value}
+                          />
+                          <small className="error-mesg">
+                            {formData["itemDescription"].errorMessage}
+                          </small>
                         </div>
                       </div>
 
                       <div className="col-sm-12 col-lg-6">
-                        <div className="container" style={{width:'100%', height:'300px'}}>
+                        <div
+                          className="container"
+                          style={{ width: "100%", height: "300px" }}
+                        >
                           <div className="crop-container">
-                            <Cropper 
-                            image={image} 
-                            crop={crop} 
-                            rotation={rotation} 
-                            zoom={zoom} 
-                            zoomSpeed={4} 
-                            maxZoom={3} 
-                            zoomWithScroll={true} 
-                            showGrid={true} 
-                            aspect={aspectRatio} 
-                            onCropChange={setCrop} 
-                            onCropComplete={onCropComplete} 
-                            onZoomChange={setZoom} 
-                            onRotationChange={setRotation}/>
+                            <Cropper
+                              image={image}
+                              crop={crop}
+                              rotation={rotation}
+                              zoom={zoom}
+                              zoomSpeed={4}
+                              maxZoom={3}
+                              zoomWithScroll={true}
+                              showGrid={true}
+                              aspect={aspectRatio}
+                              onCropChange={setCrop}
+                              onCropComplete={onCropComplete}
+                              onZoomChange={setZoom}
+                              onRotationChange={setRotation}
+                            />
                           </div>
                         </div>
                       </div>
@@ -346,35 +418,74 @@ export default function Banners() {
                         <div className="controls">
                           <label>
                             Rotate
-                            <Slider value={rotation} min={0} max={360} step={1} aria-labelledby="rotate" onChange={(e, rotation) => setRotation(rotation)} className="range" />
+                            <Slider
+                              value={rotation}
+                              min={0}
+                              max={360}
+                              step={1}
+                              aria-labelledby="rotate"
+                              onChange={(e, rotation) => setRotation(rotation)}
+                              className="range"
+                            />
                           </label>
                           <label>
                             Zoom
-                            <Slider value={zoom} min={1} max={3} step={0.1} aria-labelledby="zoom" onChange={(e, zoom) => setZoom(zoom)} className="range" />
+                            <Slider
+                              value={zoom}
+                              min={1}
+                              max={3}
+                              step={0.1}
+                              aria-labelledby="zoom"
+                              onChange={(e, zoom) => setZoom(zoom)}
+                              className="range"
+                            />
                           </label>
                         </div>
                         <div className="cropped-image-container">
                           {croppedImage && (
-                            <img className="cropped-image" src={croppedImage} alt="cropped" />
+                            <img
+                              className="cropped-image"
+                              src={croppedImage}
+                              alt="cropped"
+                            />
                           )}
                         </div>
                       </div>
 
                       <div className="col-sm-12 col-lg-12 mt-3">
-                        <button type="button" className="btn btn-primary" style={{cursor: 'pointer', marginRight: '10px'}} onClick={triggerInputFileCLick}>Upload Image
-                          <input type="file" ref={inputFileRef} name="cover" onChange={handleImageUpload} accept="img/*" style={{ display: "none" }}/>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          style={{ cursor: "pointer", marginRight: "10px" }}
+                          onClick={triggerInputFileCLick}
+                        >
+                          Upload Image
+                          <input
+                            type="file"
+                            ref={inputFileRef}
+                            name="cover"
+                            onChange={handleImageUpload}
+                            accept="img/*"
+                            style={{ display: "none" }}
+                          />
                         </button>
-                        <button type="button" className="btn btn-primary" style={{marginRight: '10px'}} onClick={handleFormSubmit}>Save</button>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          style={{ marginRight: "10px" }}
+                          onClick={handleFormSubmit}
+                        >
+                          Save
+                        </button>
                       </div>
                     </div>
                   </form>
-                }
-                
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div> 
-  )
+    </div>
+  );
 }

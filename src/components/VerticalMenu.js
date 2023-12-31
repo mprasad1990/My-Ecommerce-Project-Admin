@@ -54,6 +54,13 @@ export default function VerticalMenu() {
               </ul>}
             </li>
 
+            <li className={`${(location.pathname === "/testimonials") ? "mm-active" : ""}`}  onClick={ () => {openSubmenu("testimonials")}}>
+              <Link to="/testimonials" className="waves-effect">
+                <i className="fas fa-comments"></i>
+                <span>Testimonials</span>
+              </Link>
+            </li>
+
             <li className={`${(location.pathname === "/contacts") ? "mm-active" : ""}`}  onClick={ () => {openSubmenu("contacts")}}>
               <Link to="/contacts" className="waves-effect">
                 <i className="fas fa-inbox"></i>

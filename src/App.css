@@ -42,6 +42,7 @@
 }
 
 .form-error input,
+.form-error select,
 .form-error textarea {
     color: #ff0000;
     border: 1px solid #ff0000;

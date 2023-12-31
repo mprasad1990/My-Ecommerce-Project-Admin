@@ -18,6 +18,7 @@ import AlertContext from '../context/alert/AlertContext';
 import TestCropper from './TestCropper';
 import Loader from './util/Loader';
 import Alert from './util/Alert';
+import Testimonials from './Testimonials';
 
 export default function Core() {
 
@@ -42,6 +43,7 @@ export default function Core() {
                 <Route exact path="/makeup" element={<Makeup/>}></Route>
                 <Route exact path="/skincare" element={<Skincare/>}></Route>
                 <Route exact path="/haircare" element={<Haircare/>}></Route>
+                <Route exact path="/testimonials" element={<Testimonials/>}></Route>
                 <Route exact path="/contacts" element={<Contacts/>}></Route>
                 <Route exact path="/subscribers" element={<Subscribers/>}></Route>
                 <Route exact path="/test-cropper" element={<TestCropper/>}></Route>
